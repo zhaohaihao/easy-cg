@@ -38,13 +38,14 @@
 3. 目前提供三个入口:<br/>
 　　　以表名 gen_test_demo 为例子, 主要是以下几种情况:<br/>
 　　　　　　1. gen_test_demo ==> Demo 可以传入多表<br/>
-　　　　　　　  genCodeWithSimpleName("gen_test_demo");<br/>
+　　　　　　　 genCodeWithSimpleName("gen_test_demo");<br/>
  		
 　　　　　　2. gen_test_demo ==> GenTestDemo 可以传入多表<br/>
-　　　　　　　  genCodeWithDetailName("gen_test_demo");<br/>
+　　　　　　　 genCodeWithDetailName("gen_test_demo");<br/>
 	 
 　　　　　　3. gen_test_demo ==> IDemo 自定义名称<br/>
-　　　　　　　  genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
+　　　　　　　 genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
+
 4. 使用过程仍存在相关Bug, 您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a>, 万分感激
 
 <br /><br />
