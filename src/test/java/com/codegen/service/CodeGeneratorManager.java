@@ -10,6 +10,8 @@ import org.mybatis.generator.config.JDBCConnectionConfiguration;
 import org.mybatis.generator.config.ModelType;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codegen.service.impl.ControllerGenerator;
 import com.codegen.service.impl.ModelAndMapperGenerator;
@@ -26,8 +28,10 @@ import freemarker.template.TemplateExceptionHandler;
  */
 public class CodeGeneratorManager {
 	
+	protected static final Logger logger = LoggerFactory.getLogger(CodeGeneratorManager.class);
+	
 	// JDBC 相关配置信息
-	protected static final String JDBC_URL = "jdbc:mysql://localhost:3306/test";
+	protected static final String JDBC_URL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false";
 	protected static final String JDBC_USERNAME = "root";
 	protected static final String JDBC_PASSWORD = "root";
 	protected static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
