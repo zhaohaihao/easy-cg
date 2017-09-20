@@ -10,7 +10,7 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 
 	@Override
 	public void genCode(String tableName, String modelName, String sign) {
-
+		
 	}
-
+	
 }

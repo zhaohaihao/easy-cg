@@ -1,14 +1,24 @@
 package com.codegen.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.mybatis.generator.config.Context;
+import org.mybatis.generator.config.JDBCConnectionConfiguration;
+import org.mybatis.generator.config.ModelType;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
 
 import com.codegen.service.impl.ControllerGenerator;
 import com.codegen.service.impl.ModelAndMapperGenerator;
 import com.codegen.service.impl.ServiceGenerator;
 import com.codegen.util.StringUtils;
 import com.google.common.base.CaseFormat;
+
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 
 /**
  * 代码生成器基础项 (常量信息 & 通用方法)
@@ -56,13 +66,53 @@ public class CodeGeneratorManager {
 	// 模板注释中 @date
 	protected static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
 	
+	private static Configuration configuration = null;
+	
+	/**
+	 * 获取 Freemarker 模板环境配置
+	 * @return
+	 */
+	public Configuration getFreemarkerConfiguration() {
+		if (configuration == null) {
+			configuration = initFreemarkerConfiguration();
+			return initFreemarkerConfiguration();
+		}
+		return configuration;
+	}
+	
+	/**
+	 * Mybatis 代码自动生成基本配置
+	 * @return
+	 */
+	public Context initMybatisGeneratorContext(String sign) {
+		Context context = new Context(ModelType.FLAT);
+		context.setId("Potato");
+		context.setTargetRuntime("MyBatis3Simple");
+		context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
+        context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");
+        
+        JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
+        jdbcConnectionConfiguration.setConnectionURL(JDBC_URL);
+        jdbcConnectionConfiguration.setUserId(JDBC_USERNAME);
+        jdbcConnectionConfiguration.setPassword(JDBC_PASSWORD);
+        jdbcConnectionConfiguration.setDriverClass(JDBC_DIVER_CLASS_NAME);
+        context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
+        
+        SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
+        sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
+        sqlMapGeneratorConfiguration.setTargetPackage("mapper." + sign);
+        context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
+        
+		return context;
+	}
+	
 	/**
 	 * 生成简单名称代码
 	 * eg: 
 	 * 	genCode("gen_test_demo");  gen_test_demo ==> Demo
 	 * @param tableNames 表名, 可以多表
 	 */
-	public static void genCodeWithSimpleName(String ...tableNames) {
+	public void genCodeWithSimpleName(String ...tableNames) {
 		genCodeByTableName(true, tableNames);
 	}
 	
@@ -72,7 +122,7 @@ public class CodeGeneratorManager {
 	 * 	genCode("gen_test_demo");  gen_test_demo ==> GenTestDemo
 	 * @param tableNames 表名, 可以多表
 	 */
-	public static void genCodeWithDetailName(String ...tableNames) {
+	public void genCodeWithDetailName(String ...tableNames) {
 		genCodeByTableName(false, tableNames);
 	}
 	
@@ -82,7 +132,7 @@ public class CodeGeneratorManager {
 	 * 	genCode("gen_test_demo", "IDemo");  gen_test_demo ==> IDemo
 	 * @param tableName 表名, 只能单表
 	 */
-	public static void genCodeWithCustomName(String tableName, String customModelName) {
+	public void genCodeWithCustomName(String tableName, String customModelName) {
 		genCodeByTableName(tableName, customModelName, false);
 	}
 	
@@ -92,7 +142,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名, eg: gen_test_demo
 	 * @return
 	 */
-	protected static String tableNameConvertLowerCamel(String tableName) {
+	protected String tableNameConvertLowerCamel(String tableName) {
 		return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableName.toLowerCase());
 	}
 	
@@ -102,7 +152,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名, eg: gen_test_demo
 	 * @return
 	 */
-	protected static String tableNameConvertUpperCamel(String tableName) {
+	protected String tableNameConvertUpperCamel(String tableName) {
 		return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName.toLowerCase());
 	}
 	
@@ -112,7 +162,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名
 	 * @return
 	 */
-	protected static String tableNameConvertMappingPath(String tableName) {
+	protected String tableNameConvertMappingPath(String tableName) {
 		tableName = tableName.toLowerCase();
 		return File.separator + (tableName.contains("_") ? tableName.replaceAll("_", File.separator) : tableName);
 	}
@@ -123,19 +173,9 @@ public class CodeGeneratorManager {
 	 * @param modelName
 	 * @return
 	 */
-	protected static String modelNameConvertMappingPath(String modelName) {
+	protected String modelNameConvertMappingPath(String modelName) {
 		String tableName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, modelName);
 		return tableNameConvertMappingPath(tableName);
-	}
-	
-	/**
-	 * 包转成路径
-	 * eg: com.bigsea.sns ==> com/bigsea/sns
-	 * @param packageName
-	 * @return
-	 */
-	protected static String packageConvertPath(String packageName) {
-		return String.format("/%s/", packageName.contains(".") ? packageName.replaceAll("\\.", "/") : packageName);
 	}
 	
 	/**
@@ -143,7 +183,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名, eg: gen_test_demo
 	 * @return 区分字段 eg: test
 	 */
-	protected static String getSign(String tableName) {
+	protected String getSign(String tableName) {
 		return getTableNameSplit(tableName)[1];
 	}
 	
@@ -152,7 +192,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名
 	 * @return
 	 */
-	protected static String getDefModelName(String tableName) {
+	protected String getDefModelName(String tableName) {
 		String[] strs = getTableNameSplit(tableName);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 2; i < strs.length; i++) {
@@ -166,7 +206,7 @@ public class CodeGeneratorManager {
 	 * @param tableName 表名
 	 * @return
 	 */
-	private static String[] getTableNameSplit(String tableName) {
+	private String[] getTableNameSplit(String tableName) {
 		String[] strs = tableName.split("_");
 		if (!tableName.contains("_") || strs.length < 3) {
 			throw new RuntimeException("表名格式不正确, 请按规定格式! 例如: gen_test_demo");
@@ -181,7 +221,7 @@ public class CodeGeneratorManager {
 	 * @param flag 标志
 	 * @param tableNames 表名数组
 	 */
-	private static void genCodeByTableName(boolean flag, String ...tableNames) {
+	private void genCodeByTableName(boolean flag, String ...tableNames) {
 		for (String tableName : tableNames) {
 			genCodeByTableName(tableName, null, flag);
 		}
@@ -195,7 +235,7 @@ public class CodeGeneratorManager {
 	 * @param modelName 实体类名
 	 * @param flag 标志
 	 */
-	private static void genCodeByTableName(String tableName, String modelName, boolean flag) {
+	private void genCodeByTableName(String tableName, String modelName, boolean flag) {
 		String sign = getSign(tableName);
 		if (flag) {
 			modelName = getDefModelName(tableName);
@@ -203,5 +243,33 @@ public class CodeGeneratorManager {
 		new ModelAndMapperGenerator().genCode(tableName, modelName, sign);
 		new ServiceGenerator().genCode(tableName, modelName, sign);
 		new ControllerGenerator().genCode(tableName, modelName, sign);
+	}
+	
+	/**
+	 * Freemarker 模板环境配置
+	 * @return
+	 * @throws IOException
+	 */
+	private Configuration initFreemarkerConfiguration() {
+		Configuration cfg = null;
+		try {
+			cfg = new Configuration(Configuration.VERSION_2_3_23);
+			cfg.setDirectoryForTemplateLoading(new File(TEMPLATE_FILE_PATH));
+			cfg.setDefaultEncoding("UTF-8");
+			cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+		} catch (IOException e) {
+			throw new RuntimeException("Freemarker 模板环境初始化异常!", e);
+		}
+		return cfg;
+	}
+	
+	/**
+	 * 包转成路径
+	 * eg: com.bigsea.sns ==> com/bigsea/sns
+	 * @param packageName
+	 * @return
+	 */
+	protected static String packageConvertPath(String packageName) {
+		return String.format("/%s/", packageName.contains(".") ? packageName.replaceAll("\\.", "/") : packageName);
 	}
 }
