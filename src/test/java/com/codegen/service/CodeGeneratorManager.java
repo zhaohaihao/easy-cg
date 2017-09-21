@@ -8,6 +8,7 @@ import java.util.Date;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.JDBCConnectionConfiguration;
 import org.mybatis.generator.config.ModelType;
+import org.mybatis.generator.config.PluginConfiguration;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
 import org.slf4j.Logger;
@@ -64,7 +65,13 @@ public class CodeGeneratorManager {
 	protected static final String PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(SERVICE_IMPL_PACKAGE);
 	// 生成的 Controller 存放路径
 	protected static final String PACKAGE_PATH_CONTROLLER = packageConvertPath(CONTROLLER_PACKAGE);
-
+	// MyMapper 插件基础接口的完全限定名
+	protected static final String MAPPER_INTERFACE_REFERENCE = BASE_PACKAGE + ".dao.MyMapper";
+	// 通用 Service 层 基础接口完全限定名
+	protected static final String SERVICE_INTERFACE_REFERENCE = SERVICE_PACKAGE + ".Service";
+	// 基于通用 MyBatis Mapper 插件的 Service 接口的实现
+	protected static final String ABSTRACT_SERVICE_CLASS_REFERENCE = SERVICE_PACKAGE + ".AbstractService";
+	
 	// 模板注释中 @author
 	protected static final String AUTHOR = "zhh";
 	// 模板注释中 @date
@@ -106,6 +113,9 @@ public class CodeGeneratorManager {
         sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
         sqlMapGeneratorConfiguration.setTargetPackage("mapper." + sign);
         context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
+        
+        // 增加 mapper 插件
+        addMapperPlugin(context);
         
 		return context;
 	}
@@ -273,7 +283,18 @@ public class CodeGeneratorManager {
 	 * @param packageName
 	 * @return
 	 */
-	protected static String packageConvertPath(String packageName) {
+	private static String packageConvertPath(String packageName) {
 		return String.format("/%s/", packageName.contains(".") ? packageName.replaceAll("\\.", "/") : packageName);
+	}
+	
+	/**
+	 * 增加 Mapper 插件
+	 * @param context
+	 */
+	private void addMapperPlugin(Context context) {
+		PluginConfiguration pluginConfiguration = new PluginConfiguration();
+        pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
+        pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
+        context.addPluginConfiguration(pluginConfiguration);
 	}
 }
