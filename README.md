@@ -72,11 +72,11 @@
 需要注意的是 `MyMapper` 接口存放的路径最好不要被 Mybatis 扫描到, 会出现异常<br />
 4. 目前提供三个入口:<br/>
 以表名 gen_test_demo 为例子, 主要是以下几种情况:<br/>
--gen_test_demo ==> Demo 可以传入多表<br/>
+- gen_test_demo ==> Demo 可以传入多表<br/>
 genCodeWithSimpleName("gen_test_demo");<br/>
--gen_test_demo ==> GenTestDemo 可以传入多表<br/>
+- gen_test_demo ==> GenTestDemo 可以传入多表<br/>
 genCodeWithDetailName("gen_test_demo");<br/>
--gen_test_demo ==> IDemo 自定义名称<br/>
+- gen_test_demo ==> IDemo 自定义名称<br/>
 genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
 5. 使用过程仍存在相关Bug<br />
 您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a><br />
