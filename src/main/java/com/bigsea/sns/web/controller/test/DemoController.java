@@ -1,6 +1,8 @@
 package com.bigsea.sns.web.controller.test;
 import com.bigsea.sns.model.test.Demo;
 import com.bigsea.sns.service.test.DemoService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +52,10 @@ public class DemoController {
 
     @RequestMapping("list")
     @ResponseBody
-    public String list() {
+    public String list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+        PageHelper.startPage(page, size);
         List<Demo> list = demoService.findAll();
+        PageInfo pageInfo = new PageInfo(list);
         return list.toString();
     }
 }

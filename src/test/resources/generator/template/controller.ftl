@@ -1,6 +1,8 @@
 package ${basePackage}.web.controller.${sign};
 import ${basePackage}.model.${sign}.${modelNameUpperCamel};
 import ${basePackage}.service.${sign}.${modelNameUpperCamel}Service;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +52,10 @@ public class ${modelNameUpperCamel}Controller {
 
     @RequestMapping("list")
     @ResponseBody
-    public String list() {
+    public String list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+        PageHelper.startPage(page, size);
         List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findAll();
+        PageInfo pageInfo = new PageInfo(list);
         return list.toString();
     }
 }

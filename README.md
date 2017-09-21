@@ -9,21 +9,48 @@
 ```
 |——src	
 	|——main                                             
-|		|——java							// 存放生成的代码
+|		|——java					// 存放生成的代码
 	|
 |		|——resource
 	|
-|			|——mapper					// 存放生成的 Mapper.xml 文件
+|		|	|——mapper			// 存放生成的 Mapper.xml 文件
 	|
 |
 	|——test
-|		|——java							// 存放生成器的代码
+|		|——java					// 存放生成器的代码
+	|
+|		|	|——com
+	|
+|		|	|	|——codegen
+	|
+|		|	|	|	|——main
+	|
+|						|——CodeGeneratorMain.java // 代码生成器启动项
+	|
+|		|	|	|	|——service
+	|
+|						|——CodeGeneratorManager.java // 代码生成器基础项 (常量信息 & 通用方法)
+	|
+|						|——CodeGenerator.java // 主要逻辑接口
+	|
+|		|	|	|	|	|——impl
+	|
+|							|——ControllerGenerator.java // Controller层 代码生成器
+	|
+|							|——ServiceGenerator.java // Service层 代码生成器
+	|
+|							|——ModelAndMapperGenerator.java // Model & Mapper 代码生成器
+	|
+	|
+|		|	|	|	|——util
+	|
+|						|——StringUtils.java // 字符串操作常用方法集
 	|
 |		|——resource
 	|
-|			|——generator
+|		|	|——generator
 	|
-|				|——template				// 存放ftl模板代码
+|		|	|	|——template				// 存放ftl模板代码
 	|		
 |					|——controller.ftl	// Controller 模板代码
 	|		
@@ -33,20 +60,29 @@
 ```
 
 ## 使用说明
-1. 进入到 `src/test/java` 目录下, 找到`CodeGeneratorMain`类 为生成器的启动项,直接 `Run As Java Application` 即可运行
-2. 如果需要修改数据库,或者存储路径相关的配置,找到`CodeGeneratorManager`类,在其中修改静态即可,后期将会调整至配置文件中
-3. 目前提供三个入口:<br/>
-　　　以表名 gen_test_demo 为例子, 主要是以下几种情况:<br/>
-　　　　　　1. gen_test_demo ==> Demo 可以传入多表<br/>
-　　　　　　　 genCodeWithSimpleName("gen_test_demo");<br/>
+1.  进入到 `src/test/java` 目录下<br />
+　　找到`CodeGeneratorMain`类 为生成器的启动项<br />
+　　直接 `Run As Java Application` 运行即可<br />
+2.  如果需要修改数据库,或者存储路径相关的配置<br>
+　　找到`CodeGeneratorManager`类,在其中修改静态即可,后期将会调整至配置文件中<br />
+3. 　新增 Mapper 通用插件&分页插件<br />
+　　已经固定放置 `/CodeGenerator/src/main/java/com/bigsea/sns/dao` 和 `/CodeGenerator/src/main/java/com/bigsea/sns/service` 两个包下<br />
+　　使用者可以根据自已定义的路径存放<br/>
+　　需要注意的是 `MyMapper` 接口存放的路径最好不要被 Mybatis 扫描到, 会出现异常<br />
+4.  目前提供三个入口:<br/>
+　　以表名 gen_test_demo 为例子, 主要是以下几种情况:<br/>
+　　1. 　gen_test_demo ==> Demo 可以传入多表<br/>
+　　　　genCodeWithSimpleName("gen_test_demo");<br/>
  		
-　　　　　　2. gen_test_demo ==> GenTestDemo 可以传入多表<br/>
-　　　　　　　 genCodeWithDetailName("gen_test_demo");<br/>
+　　2.  gen_test_demo ==> GenTestDemo 可以传入多表<br/>
+　　　　genCodeWithDetailName("gen_test_demo");<br/>
 	 
-　　　　　　3. gen_test_demo ==> IDemo 自定义名称<br/>
-　　　　　　　 genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
+　　3.  gen_test_demo ==> IDemo 自定义名称<br/>
+　　　　genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
 
-4. 使用过程仍存在相关Bug, 您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a>, 万分感激
+5.  使用过程仍存在相关Bug<br />
+　　您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a><br />
+　　万分感激
 
 <br /><br />
 
