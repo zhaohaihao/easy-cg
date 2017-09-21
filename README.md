@@ -29,7 +29,7 @@
 	|
 |		|	|	|	|——service
 	|
-|						|——CodeGeneratorManager.java // 代码生成器基础项 (常量信息 & 通用方法)
+|						|——CodeGeneratorManager.java // 代码生成器基础项 (常量信息&通用方法)
 	|
 |						|——CodeGenerator.java // 主要逻辑接口
 	|
@@ -39,7 +39,7 @@
 	|
 |							|——ServiceGenerator.java // Service层 代码生成器
 	|
-|							|——ModelAndMapperGenerator.java // Model & Mapper 代码生成器
+|							|——ModelAndMapperGenerator.java // Model&Mapper 代码生成器
 	|
 	|
 |		|	|	|	|——util
