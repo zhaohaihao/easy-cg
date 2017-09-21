@@ -82,11 +82,11 @@ genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
 5. 如果需要生成自己所需的 Controller & Service & ServiceImpl 样式<br/>
 进入到 `src/test/resources/generator/template` 目录下<br />
 修改对应的ftl文件即可
-6. 推荐表名的格式类似 `gen_test_userinfo` 需要下划线分割
-`gen` 作为项目别名
-`test` 作为区分字段, 用于分包
-`userinfo` 可作为实体类名
-当然表名也可以为 `gen_test_user_info` 与 `gen_test_userinfo` 类似
+6. 推荐表名的格式类似 `gen_test_userinfo` 需要下划线分割<br />
+`gen` 作为项目别名<br />
+`test` 作为区分字段, 用于分包<br />
+`userinfo` 可作为实体类名<br />
+当然表名也可以为 `gen_test_user_info` 与 `gen_test_userinfo` 类似<br />
 7. 使用过程仍存在相关Bug<br />
 您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a><br />
 万分感激
