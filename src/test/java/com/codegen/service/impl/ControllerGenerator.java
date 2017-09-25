@@ -20,7 +20,7 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 	@Override
 	public void genCode(String tableName, String modelName, String sign) {
 		Configuration cfg = getFreemarkerConfiguration();
-		String customMapping = File.separator + sign + File.separator;
+		String customMapping = "/" + sign + "/";
 		String modelNameUpperCamel = StringUtils.isNullOrEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
 		
 		Map<String, Object> data = getDataMapInit(tableName, modelName, sign, modelNameUpperCamel); 
