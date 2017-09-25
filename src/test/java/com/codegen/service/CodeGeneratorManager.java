@@ -86,7 +86,7 @@ public class CodeGeneratorManager {
 	public Configuration getFreemarkerConfiguration() {
 		if (configuration == null) {
 			configuration = initFreemarkerConfiguration();
-			return initFreemarkerConfiguration();
+			return configuration;
 		}
 		return configuration;
 	}
