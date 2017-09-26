@@ -4,7 +4,7 @@ import com.bigsea.sns.service.Service;
 
 /**
  *
- * Created by zhh on 2017/09/21.
+ * Created by zhh on 2017/09/26.
  */
 public interface DemoService extends Service<Demo> {
 

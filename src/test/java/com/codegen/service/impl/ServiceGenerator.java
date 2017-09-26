@@ -22,7 +22,7 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 		String customMapping = "/" + sign + "/";
 		String modelNameUpperCamel = StringUtils.isNullOrEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
 		
-		Map<String, Object> data = getDataMapInit(tableName, modelName, sign, modelNameUpperCamel);
+		Map<String, Object> data = getDataMapInit(modelName, sign, modelNameUpperCamel);
 		try {
 			// 创建 Service 接口
 			File serviceFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE + customMapping
@@ -56,13 +56,13 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 	 * @param modelNameUpperCamel 首字为大写的实体类名
 	 * @return
 	 */
-	private Map<String, Object> getDataMapInit(String tableName, String modelName, String sign, String modelNameUpperCamel) {
+	private Map<String, Object> getDataMapInit(String modelName, String sign, String modelNameUpperCamel) {
 		Map<String, Object> data = new HashMap<>();
 		data.put("date", DATE);
 		data.put("author", AUTHOR);
 		data.put("sign", sign);
 		data.put("modelNameUpperCamel", modelNameUpperCamel);
-		data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
+		data.put("modelNameLowerCamel", StringUtils.toLowerCaseFirstOne(modelNameUpperCamel));
 		data.put("basePackage", BASE_PACKAGE);
 		
 		return data;

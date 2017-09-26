@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
- * Created by zhh on 2017/09/21.
+ * Created by zhh on 2017/09/26.
  */
 @Service
 public class DemoServiceImpl extends AbstractService<Demo> implements DemoService {
 
     @Autowired
-    private DemoMapper genTestDemoMapper;
+    private DemoMapper demoMapper;
 
 }
