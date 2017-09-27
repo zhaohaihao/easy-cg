@@ -2,8 +2,10 @@ package com.codegen.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.JDBCConnectionConfiguration;
@@ -27,57 +29,16 @@ import freemarker.template.TemplateExceptionHandler;
  * 代码生成器基础项 (常量信息 & 通用方法)
  * Created by zhh on 2017/09/20.
  */
-public class CodeGeneratorManager {
+public class CodeGeneratorManager extends CodeGeneratorConfig {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(CodeGeneratorManager.class);
 	
-	// JDBC 相关配置信息
-	protected static final String JDBC_URL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false";
-	protected static final String JDBC_USERNAME = "root";
-	protected static final String JDBC_PASSWORD = "root";
-	protected static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
-	
-	// 项目在硬盘上的基础路径
-	protected static final String PROJECT_PATH = System.getProperty("user.dir");
-	// 模板存放位置
-	protected static final String TEMPLATE_FILE_PATH = PROJECT_PATH + "/src/test/resources/generator/template";
-	// java文件路径
-	protected static final String JAVA_PATH = "/src/main/java";
-	// 资源文件路径
-	protected static final String RESOURCES_PATH = "/src/main/resources";
-	
-	// 项目基础包
-	protected static final String BASE_PACKAGE = "com.bigsea.sns";
-	// 项目 Model 所在包
-	protected static final String MODEL_PACKAGE = BASE_PACKAGE + ".model";
-	// 项目 Mapper 所在包
-	protected static final String MAPPER_PACKAGE = BASE_PACKAGE + ".dao.mapper";
-	// 项目 Service 所在包
-	protected static final String SERVICE_PACKAGE = BASE_PACKAGE + ".service";
-	// 项目 Service 实现类所在包
-	protected static final String SERVICE_IMPL_PACKAGE = BASE_PACKAGE + ".service.impl";
-	// 项目 Controller 所在包
-	protected static final String CONTROLLER_PACKAGE = BASE_PACKAGE + ".web.controller";
-	
-	// 生成的 Service 存放路径
-	protected static final String PACKAGE_PATH_SERVICE = packageConvertPath(SERVICE_PACKAGE);
-	// 生成的 Service 实现存放路径
-	protected static final String PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(SERVICE_IMPL_PACKAGE);
-	// 生成的 Controller 存放路径
-	protected static final String PACKAGE_PATH_CONTROLLER = packageConvertPath(CONTROLLER_PACKAGE);
-	// MyMapper 插件基础接口的完全限定名
-	protected static final String MAPPER_INTERFACE_REFERENCE = BASE_PACKAGE + ".dao.MyMapper";
-	// 通用 Service 层 基础接口完全限定名
-	protected static final String SERVICE_INTERFACE_REFERENCE = SERVICE_PACKAGE + ".Service";
-	// 基于通用 MyBatis Mapper 插件的 Service 接口的实现
-	protected static final String ABSTRACT_SERVICE_CLASS_REFERENCE = SERVICE_PACKAGE + ".AbstractService";
-	
-	// 模板注释中 @author
-	protected static final String AUTHOR = "zhh";
-	// 模板注释中 @date
-	protected static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
-	
 	private static Configuration configuration = null;
+	
+	static {
+		// 初始化配置信息
+		init();
+	}
 	
 	/**
 	 * 获取 Freemarker 模板环境配置
@@ -86,7 +47,6 @@ public class CodeGeneratorManager {
 	public Configuration getFreemarkerConfiguration() {
 		if (configuration == null) {
 			configuration = initFreemarkerConfiguration();
-			return configuration;
 		}
 		return configuration;
 	}
@@ -106,7 +66,7 @@ public class CodeGeneratorManager {
         jdbcConnectionConfiguration.setConnectionURL(JDBC_URL);
         jdbcConnectionConfiguration.setUserId(JDBC_USERNAME);
         jdbcConnectionConfiguration.setPassword(JDBC_PASSWORD);
-        jdbcConnectionConfiguration.setDriverClass(JDBC_DIVER_CLASS_NAME);
+        jdbcConnectionConfiguration.setDriverClass(JDBC_DRIVER_CLASS_NAME);
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
         
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
@@ -278,6 +238,17 @@ public class CodeGeneratorManager {
 	}
 	
 	/**
+	 * 增加 Mapper 插件
+	 * @param context
+	 */
+	private void addMapperPlugin(Context context) {
+		PluginConfiguration pluginConfiguration = new PluginConfiguration();
+        pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
+        pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
+        context.addPluginConfiguration(pluginConfiguration);
+	}
+	
+	/**
 	 * 包转成路径
 	 * eg: com.bigsea.sns ==> com/bigsea/sns
 	 * @param packageName
@@ -288,13 +259,58 @@ public class CodeGeneratorManager {
 	}
 	
 	/**
-	 * 增加 Mapper 插件
-	 * @param context
+	 * 初始化配置信息
 	 */
-	private void addMapperPlugin(Context context) {
-		PluginConfiguration pluginConfiguration = new PluginConfiguration();
-        pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
-        pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
-        context.addPluginConfiguration(pluginConfiguration);
+	private static void init() {
+		Properties prop = loadProperties();
+		
+		JDBC_URL = prop.getProperty("jdbc.url");
+		JDBC_USERNAME = prop.getProperty("jdbc.username");
+		JDBC_PASSWORD = prop.getProperty("jdbc.password");
+		JDBC_DRIVER_CLASS_NAME = prop.getProperty("jdbc.driver.class.name");
+		
+		JAVA_PATH = prop.getProperty("java.path");
+		RESOURCES_PATH = prop.getProperty("resources.path");
+		TEMPLATE_FILE_PATH = PROJECT_PATH + prop.getProperty("template.file.path");
+		
+		BASE_PACKAGE = prop.getProperty("base.package");
+		MODEL_PACKAGE = prop.getProperty("model.package");
+		MAPPER_PACKAGE = prop.getProperty("mapper.package");
+		SERVICE_PACKAGE = prop.getProperty("service.package");
+		SERVICE_IMPL_PACKAGE = prop.getProperty("service.impl.package");
+		CONTROLLER_PACKAGE = prop.getProperty("controller.package");
+		
+		MAPPER_INTERFACE_REFERENCE = prop.getProperty("mapper.interface.reference");
+		SERVICE_INTERFACE_REFERENCE = prop.getProperty("service.interface.reference");
+		ABSTRACT_SERVICE_CLASS_REFERENCE = prop.getProperty("abstract.service.class.reference");
+		
+		String servicePackage = prop.getProperty("package.path.service");
+		String serviceImplPackage = prop.getProperty("package.path.service.impl");
+		String controllerPackage = prop.getProperty("package.path.controller");
+		
+		PACKAGE_PATH_SERVICE = "".equals(servicePackage) ? packageConvertPath(SERVICE_PACKAGE) : servicePackage;
+		PACKAGE_PATH_SERVICE_IMPL = "".equals(serviceImplPackage) ? packageConvertPath(SERVICE_IMPL_PACKAGE) : serviceImplPackage;
+		PACKAGE_PATH_CONTROLLER = "".equals(controllerPackage) ? packageConvertPath(CONTROLLER_PACKAGE) : controllerPackage;
+		
+		AUTHOR = prop.getProperty("author");
+		String dateFormat = "".equals(prop.getProperty("date-format")) ? "yyyy/MM/dd" : prop.getProperty("date-format");
+		DATE = new SimpleDateFormat(dateFormat).format(new Date());
 	}
+	
+	/**
+	 * 加载配置文件
+	 * @return
+	 */
+	private static Properties loadProperties() {
+		Properties prop = null;
+		try {
+			prop = new Properties();
+			InputStream in = CodeGeneratorManager.class.getClassLoader().getResourceAsStream("generatorConfig.properties");
+			prop.load(in);
+		} catch (Exception e) {
+			throw new RuntimeException("加载配置文件异常!", e);
+		}
+		return prop;
+	}
+	
 }

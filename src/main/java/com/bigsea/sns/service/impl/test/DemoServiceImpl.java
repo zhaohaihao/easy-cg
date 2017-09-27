@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
- * Created by zhh on 2017/09/26.
+ * Created by zhh on 2017/09/27.
  */
 @Service
 public class DemoServiceImpl extends AbstractService<Demo> implements DemoService {
