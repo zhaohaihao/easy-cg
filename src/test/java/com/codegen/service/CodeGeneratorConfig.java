@@ -1,5 +1,9 @@
 package com.codegen.service;
 
+/**
+ * 配置信息
+ * Created by zhh on 2017/09/27.
+ */
 public class CodeGeneratorConfig {
 	// JDBC 相关配置信息
 	protected static String JDBC_URL;
