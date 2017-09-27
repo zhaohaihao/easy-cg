@@ -1,7 +1,7 @@
 package com.codegen.service;
 
 /**
- * 配置信息
+ * 配置信息变量
  * Created by zhh on 2017/09/27.
  */
 public class CodeGeneratorConfig {

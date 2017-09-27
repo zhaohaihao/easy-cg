@@ -29,7 +29,9 @@
 	|
 |		|	|	|	|——service
 	|
-|						|——CodeGeneratorManager.java // 代码生成器基础项 (常量信息&通用方法)
+|						|——CodeGeneratorManager.java // 代码生成器基础项 (通用方法)
+	|
+|						|——CodeGeneratorConfig.java // 所有的配置信息变量
 	|
 |						|——CodeGenerator.java // 主要逻辑接口
 	|
@@ -48,6 +50,8 @@
 	|
 |		|——resource
 	|
+|		|	|——generatorConfig.properties // 配置文件
+	|
 |		|	|——generator
 	|
 |		|	|	|——template				// 存放ftl模板代码
@@ -60,18 +64,26 @@
 ```
 
 ## 使用说明
-1. 进入到 `src/test/java` 目录下<br />
+#### 运行
+进入到 `src/test/java` 目录下<br />
 找到`CodeGeneratorMain`类 为生成器的启动项<br />
 直接 `Run As Java Application` 运行即可<br />
-2. 如果需要修改数据库配置信息,或者存储路径的相关配置信息<br>
-进入到 `src/test/java/com/codegen/service` 目录下<br />
-找到`CodeGeneratorManager`类,在其中修改静态变量即可,后期将会调整至配置文件中<br />
-3. 新增 Mapper 通用插件&分页插件<br />
+
+#### 修改配置
+进入到 `src/test/resources` 目录下<br />
+找到 `generatorConfig.properties` 文件<br />
+修改对应的参数即可<br />
+具体的注释信息可参考 `/src/test/java/com/codegen/service/CodeGeneratorConfig.java` 类<br />
+
+#### Mybatis 通用插件
+新增 Mapper 通用插件&分页插件<br />
 已经固定放置 `src/main/java/com/bigsea/sns/dao` 和 <br />
 `src/main/java/com/bigsea/sns/service` 两个包下<br />
 使用者可以根据自已定义的路径存放<br/>
 但是需要注意的是 `MyMapper` 接口存放的路径最好不要被 `Mybatis` 扫描到, 会出现异常<br />
-4. 目前提供三个入口:<br/>
+插件路径变换后, 需要修改对应配置文件的值<br />
+
+#### 入口说明
 以表名 gen_test_demo 为例子, 主要是以下几种情况:<br/>
 - gen_test_demo ==> Demo 可以传入多表<br/>
 genCodeWithSimpleName("gen_test_demo");<br/>
@@ -79,15 +91,27 @@ genCodeWithSimpleName("gen_test_demo");<br/>
 genCodeWithDetailName("gen_test_demo");<br/>
 - gen_test_demo ==> IDemo 自定义名称<br/>
 genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
-5. 如果需要生成自己所需的 Controller & Service & ServiceImpl 样式<br/>
+
+#### 模板样式修改
+如果需要生成自己所需的 Controller & Service & ServiceImpl 样式<br/>
 进入到 `src/test/resources/generator/template` 目录下<br />
 修改对应的ftl文件即可
-6. 推荐表名的格式类似 `gen_test_userinfo` 需要下划线分割<br />
+
+#### 数据库表名规则
+推荐表名的格式类似 `gen_test_userinfo` 需要下划线分割<br />
 `gen` 作为项目别名<br />
 `test` 作为区分字段, 用于分包<br />
 `userinfo` 可作为实体类名<br />
 当然表名也可以为 `gen_test_user_info` 与 `gen_test_userinfo` 类似<br />
-7. 使用过程仍存在相关Bug<br />
+
+如果表名有自己的规则, 您可以通过修改 `/src/test/java/com/codegen/service/CodeGeneratorManager.java` 类中<br />
+`getSign(String tableName)`, <br />
+`getDefModelName(String tableName)`, <br />
+`getTableNameSplit(String tableName)`, <br />
+这三个方法来自定义规则
+
+#### 使用过程遇到问题
+使用过程仍存在相关Bug<br />
 您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a><br />
 万分感激
 
