@@ -80,4 +80,4 @@ buildNumber.properties
 .classpath
 .settings
 .metadata
-
+.properties
