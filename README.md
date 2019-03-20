@@ -112,7 +112,7 @@ genCodeWithCustomName("gen_test_demo", "IDemo");<br/>
 
 #### 使用过程遇到问题
 使用过程仍存在相关Bug<br />
-您可以将详情发送至我的邮箱<a href="mailto:bigsea1994@gmail.com">bigsea1994@gmail.com</a><br />
+您可以将详情发送至我的邮箱<a href="mailto:zhh2933@gmail.com">zhh2933@gmail.com</a><br />
 万分感激
 
 ## 相关参考文档
