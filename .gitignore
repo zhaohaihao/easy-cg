@@ -81,3 +81,5 @@ buildNumber.properties
 .settings
 .metadata
 .properties
+
+*.iml
